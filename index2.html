@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Management App</title>
+  <style>
+    /* Styles (unchanged) */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      display: flex;
+      height: 100vh;
+      background-color: #66bb6a;
+    }
+    .sidebar {
+      width: 20%;
+      background: #d6d318;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .profile {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .profile img {
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+    .menu {
+      width: 100%;
+    }
+    .menu-item {
+      padding: 10px;
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .menu-item:hover, .menu-item.active {
+      background: #d1d0da;
+    }
+    .menu-item span {
+      margin-left: 10px;
+    }
+    .stats {
+      margin-top: auto;
+      text-align: center;
+    }
+    .stats .tasks-count {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .task-header h1 {
+      font-size: 25px;
+      color: #01011f;
+    }
+    .task-header button {
+      padding: 15px 25px;
+      background-color: #d1d0da;
+      color: #05020f;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .task-header button:hover {
+      background-color: #db8adb;
+    }
+    .task-list {
+      margin-top: 20px;
+    }
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+    }
+    .task-item:hover {
+      background: #d4c708;
+    }
+    .task-item .actions {
+      display: flex;
+      align-items: center;
+    }
+    .task-item img {
+      width: 30px;
+      height: 30px;
+      margin-left: 10px;
+    }
+    .task-sidebar {
+      width: 25%;
+      background: #c7d31b;
+      padding: 20px;
+    }
+    .task-sidebar h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    .task-sidebar .task-detail img {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+    #task-input-container button {
+      font-size: 18px;
+      padding: 12px 25px;
+      background-color: white;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #task-input-container button:hover {
+      background-color: #57a05c;
+    }
+    .logout-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .logout-btn:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="profile">
+      <img src="IMG-20240929-WA0147.jpg" alt="Profile">
+      <p>Hello, Pritish</p>
+    </div>
+    <div class="menu">
+      <div class="menu-item active"><span>All Tasks</span></div>
+      <div class="menu-item"><span>Today</span></div>
+    </div>
+    <div class="stats">
+      <div class="tasks-count">Today Tasks: <span id="task-count">0</span></div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="main">
+    <div class="task-header">
+      <h1>To-Do</h1>
+      <button onclick="showTaskInput()">Add Task</button>
+    </div>
+    <div id="task-input-container" style="margin-top: 30px; display: none;">
+      <input id="task-input" type="text" placeholder="Enter task..." style="padding: 10px; width: 70%;">
+      <button onclick="addTask()">Add</button>
+    </div>
+    <div class="task-list" id="task-list"></div>
+  </div>
+
+  <div class="task-sidebar">
+    <h2>Task Details</h2>
+    <div id="task-detail">Select a task to see details</div>
+    <p id="task-time"></p>
+  </div>
+
+  <script>
+    let tasks = [];
+
+    const categoryImages = {
+      Breakfast: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWb_KqSg6Pbkn4KyvupUPdi2wRcqd3Or5sJQ&s",
+      Lunch: "healthy-dinner-indian-recipe (1).jpg",
+      Dinner: "WhatsApp Image 2024-12-08 at 9.39.41 PM (1) (1) (1).jpg",
+    };
+
+    function showTaskInput() {
+      const inputContainer = document.getElementById("task-input-container");
+      inputContainer.style.display = inputContainer.style.display === "none" ? "block" : "none";
+    }
+
+    function addTask() {
+      const taskInput = document.getElementById("task-input");
+      const taskName = taskInput.value.trim();
+      if (taskName) {
+        const category = detectCategory(taskName);
+        tasks.push({ name: taskName, category, completed: false });
+        taskInput.value = "";
+        renderTasks();
+      }
+    }
+
+    function detectCategory(taskName) {
+      const lowerName = taskName.toLowerCase();
+      if (lowerName.includes("breakfast")) return "Breakfast";
+      if (lowerName.includes("lunch")) return "Lunch";
+      if (lowerName.includes("dinner")) return "Dinner";
+      return "Other";
+    }
+
+    function renderTasks() {
+      const taskList = document.getElementById("task-list");
+      const taskCount = document.getElementById("task-count");
+      taskList.innerHTML = "";
+
+      tasks.forEach((task, index) => {
+        const taskItem = document.createElement("div");
+        taskItem.className = "task-item";
+        taskItem.innerHTML = `
+          <div>
+            <input type="checkbox" ${task.completed ? "checked" : ""} onclick="toggleComplete(${index})">
+            <span>${task.name}</span>
+            ${task.category !== "Other" ? `<img src="${categoryImages[task.category]}" alt="${task.category}">` : ""}
+          </div>
+        `;
+        taskItem.onclick = () => showDetails(task);
+        taskList.appendChild(taskItem);
+      });
+
+      taskCount.textContent = tasks.length;
+    }
+
+    function toggleComplete(index) {
+      tasks[index].completed = !tasks[index].completed;
+      renderTasks();
+    }
+
+    function showDetails(task) {
+      const taskDetail = document.getElementById("task-detail");
+      taskDetail.innerHTML = `
+        <p><strong>Task:</strong> ${task.name}</p>
+        <p><strong>Category:</strong> ${task.category}</p>
+        ${task.category !== "Other" ? `<img src="${categoryImages[task.category]}" alt="${task.category}">` : ""}
+      `;
+    }
+
+    function logout() {
+      // Redirect to the logout page or handle the logout logic here
+      window.location.href = "logout.html";
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>

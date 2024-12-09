@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - To-Do List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif; 
+      background-image: url('https://thumbs.dreamstime.com/b/indian-woman-welcome-gesture-festival-vector-44030243.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    } 
+    .login-container {
+      background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h2 {  
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+      color: #333;
+    }
+    input:focus {
+      outline: none;
+      border-color: #0056b3;
+    }
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .login-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0056b3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .login-button:hover {
+      background-color: #004494;
+    }
+    iframe {
+      display: none; /* Hide the video player */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>TO DO LIST</h2>
+    <!-- Set the action to index.html -->
+    <form action="index2.html" method="GET">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      </div>
+      <div class="error" id="error-message"></div>
+      <button type="submit" class="login-button">Login</button>
+    </form>
+  </div>
+
+  <!-- Embedded YouTube video (audio-only) -->
+  <!-- <iframe 
+    id="audio-iframe"
+    src="https://www.youtube.com/embed/2KiPzzkcFpc?autoplay=1&loop=1&playlist=2KiPzzkcFpc"
+    allow="autoplay"
+    frameborder="0"
+    allowfullscreen>
+  </iframe> -->
+
+  <script>
+    const form = document.querySelector('form');
+    const errorMessage = document.getElementById('error-message');
+
+    // YouTube Player API
+    let player;
+    
+    // Create YouTube player after the page is loaded
+    // function onYouTubeIframeAPIReady() {
+    //   player = new YT.Player('audio-iframe', {
+    //     events: {
+    //       'onReady': onPlayerReady
+    //     }
+    //   });
+    // }
+
+    // // When player is ready, play the video for 27 seconds
+    // function onPlayerReady(event) {
+    //   event.target.playVideo();
+    //   setTimeout(function() {
+    //     player.stopVideo();  // Stop the video after 27 seconds
+    //   }, 27000);  // 27 seconds
+    // }
+
+    // // Load the YouTube Player API
+    // const script = document.createElement('script');
+    // script.src = "https://www.youtube.com/iframe_api";
+    // document.body.appendChild(script);
+
+    form.addEventListener('submit', function(e) {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      // Example credentials (for demonstration only)
+      const validEmail = "abc@gmail.com";
+      const validPassword = "abc";
+
+      // Client-side validation of login credentials
+      if (email !== validEmail || password !== validPassword) {
+        e.preventDefault(); // Stop form submission
+        errorMessage.textContent = "Invalid email or password!";
+      } else {
+        errorMessage.textContent = ""; // Clear the error message
+        // Allow the form to submit, redirecting to index.html
+      }
+    });
+  </script>
+
+</body>
+</html>
+              
